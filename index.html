@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>مسابقة التحدي | أسرة الدراسات الاجتماعية — الصف الثامن</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+ --z50:#fafafa;--z100:#f4f4f5;--z200:#e4e4e7;--z300:#d4d4d8;--z400:#a1a1aa;--z500:#71717a;
+ --em200:#a7f3d0;--em300:#6ee7b7;--em400:#34d399;--em500:#10b981;
+ --am300:#fcd34d;--am400:#fbbf24;--am500:#f59e0b;
+ --ro200:#fecdd3;--ro300:#fda4af;--ro400:#fb7185;--ro500:#f43f5e;
+ --te200:#99f6e4;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Cairo','Segoe UI',Tahoma,sans-serif;background:#09090b;color:var(--z100);min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+::selection{background:rgba(16,185,129,.35)}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.22)}
+
+/* ---------- الخلفية المتوهجة ---------- */
+.backdrop{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.blob{position:absolute;border-radius:50%}
+.blob-emerald{top:-10rem;left:50%;transform:translateX(-50%);width:42rem;height:26rem;background:rgba(16,185,129,.15);filter:blur(120px)}
+.blob-amber{bottom:-6rem;right:-8rem;width:20rem;height:20rem;background:rgba(245,158,11,.10);filter:blur(110px)}
+.blob-teal{left:-7rem;top:33%;width:18rem;height:18rem;background:rgba(20,184,166,.10);filter:blur(110px)}
+.dots{position:absolute;inset:0;background-image:radial-gradient(circle at center,rgba(255,255,255,.035) 1px,transparent 1px);background-size:26px 26px}
+
+/* ---------- زر الصوت ---------- */
+.sound-toggle{position:fixed;top:1rem;left:1rem;z-index:50;width:2.75rem;height:2.75rem;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:var(--z400);box-shadow:0 10px 25px rgba(0,0,0,.4);backdrop-filter:blur(8px);transition:all .2s}
+.sound-toggle:hover{transform:scale(1.05)}
+.sound-toggle.on{border-color:rgba(52,211,153,.3);background:rgba(16,185,129,.1);color:var(--em300)}
+
+/* ---------- الأيقونات ---------- */
+.ic{display:inline-flex;flex-shrink:0}
+.ic svg{width:1.25rem;height:1.25rem}
+.ic-s svg{width:1rem;height:1rem}
+.ic-l svg{width:2.25rem;height:2.25rem}
+.ic-xl svg{width:2.75rem;height:2.75rem}
+
+/* ---------- عام ---------- */
+main{position:relative;z-index:10;flex:1;width:100%;max-width:48rem;margin:0 auto;padding:2rem 1rem}
+.hidden{display:none!important}
+.screen{animation:rise .45s cubic-bezier(.22,1,.36,1) both}
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:1rem}
+@keyframes rise{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes pop{0%{opacity:0;transform:translateY(10px)}60%{transform:translateY(-2px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes urgency{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.anim-pop{animation:pop .4s ease-out both}
+.pill{display:inline-flex;align-items:center;gap:.5rem;border-radius:99px;font-weight:800;font-size:.75rem;padding:.375rem .75rem}
+.c-easy{border-color:rgba(52,211,153,.4)!important}
+.c-medium{border-color:rgba(251,191,36,.4)!important}
+.c-hard{border-color:rgba(251,113,133,.4)!important}
+.chip-solid-e{background:var(--em500);color:#09090b}
+.chip-solid-m{background:var(--am500);color:#09090b}
+.chip-solid-h{background:var(--ro500);color:#09090b}
+.txt-e{color:var(--em300)}.txt-m{color:var(--am300)}.txt-h{color:var(--ro300)}
+
+/* ---------- شاشة البداية ---------- */
+.badge-wrap{text-align:center}
+.badge{display:inline-flex;align-items:center;gap:.5rem;border-radius:99px;border:1px solid rgba(52,211,153,.3);background:rgba(16,185,129,.1);padding:.375rem 1rem;font-size:.875rem;font-weight:700;color:var(--em300)}
+.school-banner{max-width:36rem;margin:1.5rem auto 0;text-align:center;border:1px solid rgba(52,211,153,.2);background:rgba(16,185,129,.06);border-radius:1.5rem;padding:1.25rem 1.5rem;backdrop-filter:blur(4px)}
+.school-family{font-size:1.25rem;font-weight:900;line-height:2.25rem;color:var(--em200)}
+.school-name{margin-top:.25rem;font-size:1rem;font-weight:700;line-height:2rem;color:var(--z300)}
+.tqaddam{margin-top:.75rem;display:flex;align-items:center;justify-content:center;gap:.75rem}
+.tqaddam .line{height:1px;width:3rem}
+.tqaddam .l1{background:linear-gradient(to left,transparent,rgba(52,211,153,.6))}
+.tqaddam .l2{background:linear-gradient(to right,transparent,rgba(52,211,153,.6))}
+.tqaddam b{font-size:.875rem;font-weight:900;color:var(--em300);letter-spacing:.05em}
+.title{margin-top:1.75rem;text-align:center;font-size:3rem;font-weight:900;line-height:1.2;background-image:linear-gradient(to left,var(--em300),var(--te200),var(--am300));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stats-grid{margin-top:2rem;display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
+.stat-card{text-align:center;padding:1rem;border-radius:1rem}
+.stat-card .ic{margin:0 auto;color:var(--em300)}
+.stat-value{margin-top:.5rem;font-size:1.5rem;font-weight:900;color:var(--z50);font-variant-numeric:tabular-nums}
+.stat-label{margin-top:.25rem;font-size:.75rem;color:var(--z500)}
+.levels-grid{margin-top:1.5rem;display:grid;grid-template-columns:1fr;gap:.75rem}
+.level-card{padding:1.25rem;border-radius:1rem;background:rgba(255,255,255,.04);position:relative}
+.lv-head{display:flex;align-items:center;justify-content:space-between}
+.lv-name{font-size:.75rem;color:var(--z400)}
+.lv-desc{margin-top:.75rem;font-weight:800;line-height:1.75rem;color:var(--z100)}
+.lv-count{margin-top:.25rem;font-size:.875rem;color:var(--z500);font-variant-numeric:tabular-nums}
+.lv-bar{margin-top:.75rem;height:.25rem;border-radius:99px;opacity:.6}
+.glow-e{box-shadow:0 0 40px -10px rgba(52,211,153,.45)}
+.glow-m{box-shadow:0 0 40px -10px rgba(251,191,36,.45)}
+.glow-h{box-shadow:0 0 40px -10px rgba(251,113,133,.45)}
+.start-wrap{margin-top:2rem;text-align:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.625rem;border-radius:1rem;font-weight:900;transition:all .2s}
+.btn-start{height:3.5rem;padding:0 2.5rem;font-size:1.125rem;background:var(--em500);color:#09090b;box-shadow:0 10px 50px -12px rgba(16,185,129,.7)}
+.btn-start:hover{transform:scale(1.02);background:var(--em400)}
+
+/* ---------- شاشة الأسئلة ---------- */
+.quiz-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.75rem}
+.lv-badge{border:1px solid transparent}
+.head-group{display:flex;align-items:center;gap:.75rem}
+.dots{display:flex;align-items:center;gap:.375rem}
+.dot{width:.625rem;height:.625rem;border-radius:50%;background:rgba(255,255,255,.15);transition:background-color .3s}
+.dot-done{background:var(--em400)}
+.dot-e{background:var(--em400)}.dot-m{background:var(--am400)}.dot-h{background:var(--ro500)}
+.score-chip{display:flex;align-items:center;gap:.375rem;border-radius:99px;border:1px solid rgba(251,191,36,.3);background:rgba(245,158,11,.15);padding:.375rem .75rem;font-size:.875rem;font-weight:700;color:var(--am300);font-variant-numeric:tabular-nums}
+.exit-btn{display:flex;align-items:center;gap:.375rem;border-radius:99px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);padding:.375rem .75rem;font-size:.75rem;font-weight:700;color:var(--z300);transition:all .2s}
+.exit-btn:hover{background:rgba(255,255,255,.1);color:#fff}
+.confirm-bar{margin-top:1rem;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.75rem;border:1px solid rgba(251,113,133,.4);background:rgba(244,63,94,.1);border-radius:1rem;padding:.75rem 1rem;animation:pop .4s ease-out both}
+.confirm-bar p{font-size:.875rem;font-weight:700;line-height:1.75rem;color:var(--ro200)}
+.confirm-btns{display:flex;align-items:center;gap:.5rem}
+.btn-yes{border-radius:.75rem;background:var(--ro500);color:#09090b;padding:.5rem 1rem;font-size:.875rem;font-weight:900;transition:background .2s}
+.btn-yes:hover{background:var(--ro400)}
+.btn-no{border-radius:.75rem;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);padding:.5rem 1rem;font-size:.875rem;font-weight:700;color:var(--z200);transition:background .2s}
+.btn-no:hover{background:rgba(255,255,255,.1)}
+.progress-wrap{margin-top:1.25rem}
+.progress-labels{display:flex;align-items:center;justify-content:space-between;font-size:.75rem;color:var(--z400);margin-bottom:.375rem}
+.progress-labels b{font-weight:700;color:var(--z100);font-variant-numeric:tabular-nums}
+.progress-track{height:.5rem;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}
+.progress-fill{height:100%;border-radius:99px;transition:width .5s}
+.q-card{margin-top:1.25rem;border-radius:1.5rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);padding:1.25rem;box-shadow:0 25px 60px -15px rgba(0,0,0,.55);backdrop-filter:blur(20px);animation:rise .45s cubic-bezier(.22,1,.36,1) both}
+.q-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.q-meta{display:flex;align-items:center;gap:1rem}
+.timer-wrap{position:relative;width:4rem;height:4rem;flex-shrink:0}
+.timer-wrap.urgent{animation:urgency .6s ease-in-out infinite}
+.timer-svg{width:100%;height:100%;transform:rotate(-90deg)}
+.timer-track{fill:none;stroke:rgba(255,255,255,.1);stroke-width:5}
+.timer-arc{fill:none;stroke:var(--em400);stroke-width:5;stroke-linecap:round;stroke-dasharray:163.36;transition:stroke-dashoffset 1s linear,stroke .3s}
+.timer-num{position:absolute;inset:0;display:grid;place-items:center;font-weight:900;font-size:1.2rem;font-variant-numeric:tabular-nums}
+.q-numline{font-size:.875rem;font-weight:700;color:var(--z400)}
+.q-numline b{font-weight:900;color:var(--z100);font-variant-numeric:tabular-nums}
+.q-lesson{margin-top:.25rem;display:flex;align-items:center;gap:.375rem;font-size:.75rem;color:var(--z500)}
+.q-chip{border:1px solid transparent;white-space:nowrap}
+.q-text{margin-top:1.5rem;font-size:1.25rem;font-weight:800;line-height:1.9;color:var(--z50)}
+.answer-space{margin-top:1.5rem}
+.answer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.answer-head label{display:flex;align-items:center;gap:.375rem;font-size:.875rem;font-weight:700;color:var(--z300)}
+.answer-head label .ic{color:var(--am300)}
+.answer-head span{font-size:.75rem;color:var(--z500)}
+textarea{width:100%;resize:vertical;border-radius:1rem;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);padding:1rem;font-size:1rem;line-height:2rem;color:var(--z100);font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s}
+textarea::placeholder{color:var(--z500)}
+textarea:focus{border-color:rgba(251,191,36,.5);box-shadow:0 0 0 3px rgba(251,191,36,.3)}
+.revealed{margin-top:1.25rem;animation:pop .4s ease-out both}
+.timeout-msg{margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem;border-radius:.75rem;border:1px solid rgba(251,113,133,.3);background:rgba(244,63,94,.1);padding:.625rem 1rem;font-size:.875rem;font-weight:700;color:var(--ro200)}
+.timeout-msg .ic{flex-shrink:0}
+.answer-box{border-radius:1rem;border:1px solid rgba(52,211,153,.3);background:rgba(16,185,129,.1);padding:1.25rem}
+.answer-title{display:flex;align-items:center;gap:.5rem;font-weight:800;color:var(--em300)}
+.answer-text{margin-top:.5rem;line-height:2rem;color:#ecfdf5}
+.controls{margin-top:1.5rem}
+.controls>div+div{margin-top:.75rem}
+.hint{text-align:center;font-size:.75rem;color:var(--z500);margin-top:.5rem}
+.btn-reveal{width:100%;height:3.5rem;font-size:1.125rem;background:linear-gradient(to left,var(--am400),var(--am500));color:#09090b;box-shadow:0 10px 40px -12px rgba(245,158,11,.55)}
+.btn-reveal:hover{transform:scale(1.01);filter:brightness(1.1)}
+.assess-grid{display:grid;grid-template-columns:1fr;gap:.75rem}
+.btn-correct{height:3rem;background:var(--em500);color:#09090b;font-weight:800;transition:all .2s}
+.btn-correct:hover{transform:scale(1.01);background:var(--em400)}
+.btn-wrong{height:3rem;border:1px solid rgba(251,113,133,.4);background:rgba(244,63,94,.15);color:var(--ro300);font-weight:800;transition:all .2s}
+.btn-wrong:hover{background:rgba(244,63,94,.25)}
+.assess-msg{display:flex;align-items:center;gap:.5rem;border-radius:.75rem;padding:.75rem 1rem;font-size:.875rem;font-weight:700;animation:pop .4s ease-out both}
+.assess-msg.ok{border:1px solid rgba(52,211,153,.4);background:rgba(16,185,129,.15);color:var(--em200)}
+.assess-msg.bad{border:1px solid rgba(251,113,133,.4);background:rgba(244,63,94,.15);color:var(--ro200)}
+.assess-msg .ic{flex-shrink:0}
+.btn-next{width:100%;height:3.25rem;font-size:1.125rem;background:var(--z50);color:#09090b}
+.btn-next:hover{transform:scale(1.01);background:var(--z200)}
+
+/* ---------- شاشة نهاية المستوى ---------- */
+.center-box{max-width:42rem;margin:0 auto;text-align:center}
+.flag-circle{margin:0 auto;width:5rem;height:5rem;display:grid;place-items:center;border-radius:50%;background:linear-gradient(to bottom left,var(--am400),var(--am500));box-shadow:0 0 60px -15px rgba(245,158,11,.8);color:#09090b}
+.sum-title{margin-top:1.5rem;font-size:1.875rem;font-weight:900;color:var(--z50)}
+.sum-level{margin-top:.5rem;font-weight:700}
+.sum-grid{margin-top:2rem;display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+.sum-card{padding:1rem;border-radius:1rem;text-align:center}
+.sum-card .ic{margin:0 auto}
+.sum-value{margin-top:.5rem;font-size:1.875rem;font-weight:900;font-variant-numeric:tabular-nums}
+.sum-label{font-size:.75rem;opacity:.85}
+.acc-box{margin-top:1.5rem;padding:1.25rem;text-align:right}
+.acc-head{display:flex;align-items:center;justify-content:space-between;font-size:.875rem;color:var(--z300)}
+.acc-head span{font-weight:700}
+.acc-head b{font-weight:900;color:var(--z50);font-variant-numeric:tabular-nums}
+.acc-track{margin-top:.75rem;height:.625rem;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}
+.acc-fill{height:100%;border-radius:99px;transition:width .7s}
+.acc-msg{margin-top:1rem;font-size:.875rem;line-height:1.75rem;color:var(--z400)}
+.btn-white{margin-top:2rem;height:3.5rem;padding:0 2rem;font-size:1.125rem;background:var(--z50);color:#09090b}
+.btn-white:hover{transform:scale(1.02);background:var(--z200)}
+.ghost-wrap{margin-top:.75rem}
+.btn-ghost{height:2.75rem;padding:0 1.5rem;font-size:.875rem;font-weight:700;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:var(--z300)}
+.btn-ghost:hover{background:rgba(255,255,255,.1);color:#fff}
+
+/* ---------- الشاشة النهائية ---------- */
+.trophy-circle{margin:0 auto;width:6rem;height:6rem;display:grid;place-items:center;border-radius:50%;background:linear-gradient(to bottom left,var(--am300),var(--am500));box-shadow:0 0 80px -15px rgba(245,158,11,.9);color:#09090b}
+.final-title{margin-top:.5rem;font-size:1.125rem;font-weight:700;color:var(--z300)}
+.final-sub{font-size:.875rem;color:var(--z500)}
+.final-pct{margin:2rem auto 0;max-width:18rem;display:flex;align-items:center;gap:1.25rem;padding:1.25rem;text-align:right}
+.final-pct .timer-wrap{width:6rem;height:6rem}
+.final-pct .timer-arc{stroke-width:6}
+.final-pct .timer-num{font-size:1.5rem}
+.final-points{margin-top:.25rem;font-size:.875rem;color:var(--z400)}
+.final-points b{font-weight:700;color:var(--am300);font-variant-numeric:tabular-nums}
+.final-correct{margin-top:.125rem;font-size:.75rem;color:var(--z500)}
+.final-levels{margin-top:1.5rem;display:flex;flex-direction:column;gap:.75rem;text-align:right}
+.fl-row{display:flex;align-items:center;justify-content:space-between;border-radius:1rem;background:rgba(255,255,255,.04);padding:1rem 1.25rem}
+.fl-right{display:flex;align-items:center;gap:.75rem}
+.fl-name{font-size:.875rem;color:var(--z400)}
+.fl-left{display:flex;align-items:center;gap:1rem;font-size:.875rem;font-weight:700;font-variant-numeric:tabular-nums}
+.final-btns{margin-top:2rem;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.75rem}
+.btn-restart{height:3.5rem;padding:0 2.5rem;font-size:1.125rem;background:var(--em500);color:#09090b;box-shadow:0 10px 50px -12px rgba(16,185,129,.7)}
+.btn-restart:hover{transform:scale(1.02);background:var(--em400)}
+.btn-exit-final{height:3.5rem;padding:0 2rem;font-size:1rem;font-weight:700;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);color:var(--z200)}
+.btn-exit-final:hover{background:rgba(255,255,255,.1);color:#fff}
+
+/* ---------- التذييل ---------- */
+footer{position:relative;z-index:10;margin-top:auto;border-top:1px solid rgba(255,255,255,.05);padding:1.25rem 1rem;text-align:center}
+footer p{font-size:.75rem;line-height:1.5rem;color:var(--z500)}
+
+@media(min-width:768px){
+ main{padding:3rem 1rem}
+ .title{font-size:3.75rem}
+ .school-family{font-size:1.5rem}
+ .school-name{font-size:1.125rem}
+ .stats-grid{grid-template-columns:repeat(4,1fr)}
+ .levels-grid{grid-template-columns:repeat(3,1fr)}
+ .q-card{padding:1.75rem}
+ .q-text{font-size:1.5rem}
+ .assess-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:639px){.exit-label{display:none}}
+</style>
+</head>
+<body>
+
+<div class="backdrop" aria-hidden="true">
+ <div class="blob blob-emerald"></div>
+ <div class="blob blob-amber"></div>
+ <div class="blob blob-teal"></div>
+ <div class="dots"></div>
+</div>
+
+<button id="soundToggle" class="sound-toggle on" aria-label="كتم الأصوات" title="كتم الأصوات"><span class="ic" data-icon="vol2"></span></button>
+
+<main>
+
+ <!-- ============ شاشة البداية ============ -->
+ <section id="screen-start" class="screen">
+  <div class="badge-wrap">
+   <span class="badge"><span class="ic ic-s" data-icon="sparkles"></span>مسابقة تعليمية تفاعلية</span>
+   <div class="school-banner">
+    <p class="school-family">أسرة الدراسات الاجتماعية للصف الثامن</p>
+    <p class="school-name">مدرسة عبد الرحمن بن عوف للبنين</p>
+    <div class="tqaddam"><span class="line l1"></span><b>تقدّم</b><span class="line l2"></span></div>
+   </div>
+   <h1 class="title">مسابقة التحدي</h1>
+  </div>
+
+  <div class="stats-grid">
+   <div class="card stat-card"><span class="ic" data-icon="listchecks"></span><div class="stat-value" id="statQuestions">٤٧</div><div class="stat-label">سؤالاً متنوعاً</div></div>
+   <div class="card stat-card"><span class="ic" data-icon="brain"></span><div class="stat-value">٣</div><div class="stat-label">مستويات متدرجة</div></div>
+   <div class="card stat-card"><span class="ic" data-icon="timer"></span><div class="stat-value">٣٠</div><div class="stat-label">ثانية لكل سؤال</div></div>
+   <div class="card stat-card"><span class="ic" data-icon="trophy"></span><div class="stat-value">١٠</div><div class="stat-label">نقاط للإجابة الصحيحة</div></div>
+  </div>
+
+  <div class="levels-grid" id="levelsGrid"></div>
+
+  <div class="start-wrap">
+   <button id="btnStart" class="btn btn-start"><span class="ic" data-icon="sparkles"></span>ابدأ المسابقة</button>
+  </div>
+ </section>
+
+ <!-- ============ شاشة الأسئلة ============ -->
+ <section id="screen-quiz" class="screen hidden">
+  <div class="quiz-head">
+   <span id="lvBadge" class="pill lv-badge"></span>
+   <div class="head-group">
+    <div class="dots" id="levelDots" aria-label="مؤشر المستويات الثلاثة"></div>
+    <div class="score-chip" aria-label="نقاطك الحالية"><span class="ic ic-s" data-icon="trophy"></span><span id="scoreVal">٠</span></div>
+    <button id="btnExit" class="exit-btn" aria-label="العودة إلى بداية المسابقة" title="العودة إلى بداية المسابقة"><span class="ic ic-s" data-icon="house"></span><span class="exit-label">العودة للبداية</span></button>
+   </div>
+  </div>
+
+  <div id="confirmExit" class="confirm-bar hidden" role="alertdialog" aria-label="تأكيد العودة إلى البداية">
+   <p>هل تريد العودة إلى بداية المسابقة؟ سيتم فقدان نقاطك وتقدمك الحالي.</p>
+   <div class="confirm-btns">
+    <button id="btnYesExit" class="btn-yes">نعم، عودة للبداية</button>
+    <button id="btnNoExit" class="btn-no">إلغاء</button>
+   </div>
+  </div>
+
+  <div class="progress-wrap">
+   <div class="progress-labels"><span>التقدم الكلي في المسابقة</span><b id="progressPct">٠٪</b></div>
+   <div class="progress-track"><div id="progressFill" class="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="q-card" id="qCard">
+   <div class="q-top">
+    <div class="q-meta">
+     <div class="timer-wrap" id="timerWrap" role="timer" aria-label="الوقت المتبقي">
+      <svg viewBox="0 0 60 60" class="timer-svg" aria-hidden="true">
+       <circle class="timer-track" cx="30" cy="30" r="26"/>
+       <circle id="timerArc" class="timer-arc" cx="30" cy="30" r="26"/>
+      </svg>
+      <span class="timer-num" id="timerNum">٣٠</span>
+     </div>
+     <div>
+      <div class="q-numline">السؤال <b id="qNum">١</b> من <b id="qTotal">١٠</b></div>
+      <div class="q-lesson"><span class="ic ic-s" data-icon="book"></span><span id="qLesson"></span></div>
+     </div>
+    </div>
+    <span id="qChip" class="pill q-chip"></span>
+   </div>
+
+   <h2 class="q-text" id="qText"></h2>
+
+   <div class="answer-space">
+    <div class="answer-head">
+     <label for="answerInput"><span class="ic ic-s" data-icon="pen"></span>مساحة إجابتك</label>
+     <span>اكتب إجابتك هنا قبل كشف الجواب</span>
+    </div>
+    <textarea id="answerInput" rows="3" placeholder="اكتب إجابتك في هذا المكان..."></textarea>
+   </div>
+
+   <div id="revealedBox" class="revealed hidden" aria-live="polite">
+    <div id="timeoutMsg" class="timeout-msg hidden"><span class="ic ic-s" data-icon="hourglass"></span>انتهى الوقت! تأمل الإجابة الصحيحة جيداً</div>
+    <div class="answer-box">
+     <div class="answer-title"><span class="ic" data-icon="bulb"></span>الإجابة الصحيحة</div>
+     <p class="answer-text" id="correctAnswer"></p>
+    </div>
+   </div>
+
+   <div class="controls">
+    <div id="ctrlAnswering">
+     <button id="btnReveal" class="btn btn-reveal"><span class="ic" data-icon="eye"></span>إظهار الإجابة</button>
+     <p class="hint">أمامك ٣٠ ثانية للتفكير، وإذا انتهت ستظهر الإجابة تلقائياً</p>
+    </div>
+    <div id="ctrlRevealed" class="hidden">
+     <div id="assessBtns" class="assess-grid">
+      <button id="btnCorrect" class="btn btn-correct"><span class="ic" data-icon="check"></span>أجبتها إجابة صحيحة</button>
+      <button id="btnWrong" class="btn btn-wrong"><span class="ic" data-icon="x"></span>أجبتها إجابة خاطئة</button>
+     </div>
+     <div id="assessMsg" class="assess-msg hidden"></div>
+     <div>
+      <button id="btnNext" class="btn btn-next"></button>
+      <p id="assessHint" class="hint">يمكنك تقييم نفسك قبل الانتقال، أو الضغط على الزر مباشرة</p>
+     </div>
+    </div>
+   </div>
+  </div>
+ </section>
+
+ <!-- ============ شاشة نهاية المستوى ============ -->
+ <section id="screen-summary" class="screen hidden">
+  <div class="center-box">
+   <div class="flag-circle"><span class="ic ic-l" data-icon="flag"></span></div>
+   <h1 class="sum-title" id="sumTitle"></h1>
+   <p class="sum-level" id="sumLevel"></p>
+   <div class="sum-grid">
+    <div class="sum-card c-easy" style="border:1px solid rgba(52,211,153,.3);background:rgba(16,185,129,.1)">
+     <span class="ic" style="color:var(--em300)" data-icon="check"></span>
+     <div class="sum-value" style="color:var(--em200)" id="sumCorrect">٠</div>
+     <div class="sum-label" style="color:rgba(110,231,183,.8)">إجابات صحيحة</div>
+    </div>
+    <div class="sum-card" style="border:1px solid rgba(251,113,133,.3);background:rgba(244,63,94,.1)">
+     <span class="ic" style="color:var(--ro300)" data-icon="x"></span>
+     <div class="sum-value" style="color:var(--ro200)" id="sumWrong">٠</div>
+     <div class="sum-label" style="color:rgba(253,164,175,.8)">إجابات خاطئة</div>
+    </div>
+    <div class="sum-card" style="border:1px solid rgba(251,191,36,.3);background:rgba(245,158,11,.1)">
+     <span class="ic" style="color:var(--am300)" data-icon="trophy"></span>
+     <div class="sum-value" style="color:var(--am200)" id="sumPoints">٠</div>
+     <div class="sum-label" style="color:rgba(252,211,77,.8)">نقطة</div>
+    </div>
+   </div>
+   <div class="card acc-box">
+    <div class="acc-head"><span>نسبة الدقة في هذا المستوى</span><b id="accVal">٠٪</b></div>
+    <div class="acc-track"><div id="accFill" class="acc-fill" style="width:0%"></div></div>
+    <p class="acc-msg" id="accMsg"></p>
+   </div>
+   <button id="btnNextLevel" class="btn btn-white"></button>
+   <div class="ghost-wrap">
+    <button id="btnSumExit" class="btn btn-ghost"><span class="ic ic-s" data-icon="house"></span>العودة إلى بداية المسابقة</button>
+   </div>
+  </div>
+ </section>
+
+ <!-- ============ الشاشة النهائية ============ -->
+ <section id="screen-final" class="screen hidden">
+  <div class="center-box">
+   <div class="trophy-circle"><span class="ic ic-xl" data-icon="trophy"></span></div>
+   <h1 class="sum-title">اكتملت المسابقة!</h1>
+   <p class="final-title" id="finalTitle"></p>
+   <p class="final-sub" id="finalSub"></p>
+   <div class="card final-pct">
+    <div class="timer-wrap" role="img" aria-label="النسبة المئوية لنتيجتك">
+     <svg viewBox="0 0 60 60" class="timer-svg" aria-hidden="true">
+      <circle class="timer-track" cx="30" cy="30" r="26"/>
+      <circle id="finalArc" class="timer-arc" cx="30" cy="30" r="26"/>
+     </svg>
+     <span class="timer-num" id="finalNum" style="color:var(--am300)">٠</span>
+    </div>
+    <div>
+     <div class="final-points"><b id="finalPoints">٠</b> نقطة من <span id="finalMax">٠</span></div>
+     <div class="final-correct">إجابات صحيحة: <span id="finalCorrect">٠</span> من <span id="finalTotal">٠</span></div>
+    </div>
+   </div>
+   <div class="final-levels" id="finalLevels"></div>
+   <div class="final-btns">
+    <button id="btnRestart" class="btn btn-restart"><span class="ic" data-icon="rotate"></span>إعادة المسابقة</button>
+    <button id="btnFinalExit" class="btn btn-exit-final"><span class="ic" data-icon="house"></span>العودة إلى بداية المسابقة</button>
+   </div>
+  </div>
+ </section>
+
+</main>
+
+<footer>
+ <p>أسرة الدراسات الاجتماعية للصف الثامن — مدرسة عبد الرحمن بن عوف للبنين</p>
+</footer>
+
+<script>
+"use strict";
+/* ============ الأيقونات (SVG) ============ */
+const ICONS={
+vol2:'<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>',
+volx:'<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/>',
+sparkles:'<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>',
+listchecks:'<path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/>',
+brain:'<path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/>',
+timer:'<line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/>',
+trophy:'<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
+house:'<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+book:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+pen:'<path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/>',
+eye:'<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+bulb:'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>',
+check:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+x:'<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>',
+hourglass:'<path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>',
+rotate:'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+chevleft:'<path d="m15 18-6-6 6-6"/>',
+flag:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/>'
+};
+function icon(n){return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0">'+ICONS[n]+'</svg>'}
+document.querySelectorAll('[data-icon]').forEach(function(el){el.innerHTML=icon(el.dataset.icon)});
+
+/* ============ بيانات المستويات ============ */
+const ORDER=['easy','medium','hard'];
+const LEVELS={
+ easy:{name:'المستوى الأول',title:'سهل',desc:'مفاهيم أساسية وتواريخ مهمة'},
+ medium:{name:'المستوى الثاني',title:'متوسط',desc:'تطبيق ومقارنة وترتيب'},
+ hard:{name:'المستوى الثالث',title:'صعب',desc:'تحليل وربط واستنتاج'}
+};
+const countByLevel=function(lv){return QUESTIONS.filter(function(q){return q.level===lv}).length};
+
+/* ============ الأسئلة (47 سؤالاً من كتاب المعين مع نموذج الإجابة الرسمي) ============ */
+const QUESTIONS=[
+{id:1,level:'easy',lesson:'جمع البيانات الجغرافية',text:'ما المقصود بالبيانات الجغرافية؟',answer:'مواقع الظواهر الجغرافية الطبيعية والبشرية ووصفها وخصائصها.'},
+{id:2,level:'easy',lesson:'جمع البيانات الجغرافية',text:'اذكر أدوات المسح الميداني الخمس المستخدمة في جمع البيانات الجغرافية.',answer:'الكاميرا - شريط القياس - خريطة العمل - البوصلة - الهاتف المحمول.'},
+{id:3,level:'easy',lesson:'جمع البيانات الجغرافية',text:'ما الأداة التي تستخدم لتسجيل الظواهر الجغرافية الطبيعية والبشرية؟',answer:'الكاميرا.'},
+{id:4,level:'easy',lesson:'جمع البيانات الجغرافية',text:'ما اسم القمر الصناعي المسجل باسم سلطنة عمان؟',answer:'القمر الصناعي (OL-1)، وهو أول قمر صناعي عماني مسجل باسم سلطنة عمان.'},
+{id:5,level:'easy',lesson:'جمع البيانات الجغرافية',text:'ما الأداة المستخدمة لتحديد الاتجاهات أثناء المسح الميداني؟',answer:'البوصلة.'},
+{id:6,level:'easy',lesson:'الدولة العثمانية في مطالع العصر الحديث',text:'من مؤسس الدولة العثمانية؟',answer:'عثمان بن أرطغرل.'},
+{id:7,level:'easy',lesson:'الدولة العثمانية في مطالع العصر الحديث',text:'ما عاصمة الدولة العثمانية؟',answer:'استنبول (القسطنطينية سابقاً).'},
+{id:8,level:'easy',lesson:'الدولة العثمانية في مطالع العصر الحديث',text:'في أي عام فتحت الدولة العثمانية مدينة القسطنطينية؟',answer:'عام 1453م.'},
+{id:9,level:'easy',lesson:'الدولة العثمانية في مطالع العصر الحديث',text:'من أي قارات امتدت الدولة العثمانية؟',answer:'قارات آسيا وأوروبا وإفريقيا، وسطرت على مساحات مهمة.'},
+{id:10,level:'easy',lesson:'الدولة العثمانية في مطالع العصر الحديث',text:'في أي عام قامت الدولة العثمانية؟',answer:'قامت عام 1299م واستمرت حتى عام 1924م.'},
+{id:11,level:'easy',lesson:'معالجة البيانات الجغرافية',text:'صنّف البيانات الجغرافية من حيث نوعها.',answer:'تنقسم إلى: بيانات مكانية وبيانات وصفية.'},
+{id:12,level:'easy',lesson:'تطبيقات البيانات الجغرافية',text:'اذكر تطبيقات البيانات الجغرافية.',answer:'المناجم والبيئة - إنتاج الطاقة - الخدمات اللوجستية - التخطيط العمراني.'},
+{id:13,level:'easy',lesson:'عمان ومقاومة التحالف البرتغالي',text:'في أي عام وصلت أول حملة برتغالية إلى عمان؟',answer:'عام 1507م.'},
+{id:14,level:'easy',lesson:'المنجزات الحضارية العمانية',text:'اذكر الأنشطة الاقتصادية الثلاثة التي برزت في عمان أثناء مطالع العصر الحديث.',answer:'الزراعة - الصناعة - التجارة.'},
+{id:15,level:'easy',lesson:'المنجزات الحضارية العمانية',text:'ما اليوم العالمي للزراعة الذي تحتفل به سلطنة عمان؟',answer:'يوم 31 أكتوبر من كل عام، لتعزيز أهمية الزراعة والعناية والرعاية بها.'},
+{id:16,level:'medium',lesson:'جمع البيانات الجغرافية',text:'اذكر طرق المسح الميداني المذكورة في الكتاب.',answer:'المسح الجوي والمسح بالأقدام.'},
+{id:17,level:'medium',lesson:'جمع البيانات الجغرافية',text:'ما خصائص الطائرات المسيّرة التي تجعلها مفيدة في جمع البيانات؟',answer:'سهولة الوصول - خفة الوزن - وقدرتها على جمع البيانات.'},
+{id:18,level:'medium',lesson:'معالجة البيانات الجغرافية',text:'رتّب مراحل معالجة البيانات الجغرافية بالترتيب الصحيح.',answer:'تحقق البيانات ← تنظيم البيانات ← معالجة البيانات ← إخراج البيانات.'},
+{id:19,level:'medium',lesson:'معالجة البيانات الجغرافية',text:'ما المقصود بنظم المعلومات الجغرافية (GIS)؟',answer:'أنظمة حاسوبية مستخدمة لجمع المعلومات الجغرافية وتحليلها ومعالجتها وإخراجها.'},
+{id:20,level:'medium',lesson:'معالجة البيانات الجغرافية',text:'اذكر أنظمة المعلومات الجغرافية الحاسوبية المذكورة في الكتاب.',answer:'GIS - GPS - Galileo - GeoDa.'},
+{id:21,level:'medium',lesson:'معالجة البيانات الجغرافية',text:'لماذا تُرتَّب البيانات الجغرافية وتُصنَّف حسب نوعها؟',answer:'لتسهيل الفهم والاستخدام.'},
+{id:22,level:'medium',lesson:'تطبيقات البيانات الجغرافية',text:'ما التحليل الذي يمثل سطح الأرض بأبعاده الثلاثة (الطول والعرض والارتفاع)؟',answer:'التحليل ثلاثي الأبعاد.'},
+{id:23,level:'medium',lesson:'تطبيقات البيانات الجغرافية',text:'ما المقصود بالخدمات اللوجستية؟',answer:'إدارة نقل الموارد والإمدادات والخدمات المختلفة من مكان إلى آخر.'},
+{id:24,level:'medium',lesson:'تطبيقات البيانات الجغرافية',text:'اذكر الجهات المسؤولة عن الأعمال المكانية في سلطنة عمان.',answer:'الهيئة العامة للمسح والمعلومات الجيومكانية - الهيئة البيئية.'},
+{id:25,level:'medium',lesson:'عمان ومقاومة التحالف البرتغالي',text:'اذكر الدول التي حكمت عمان قبل وصول البرتغاليين.',answer:'الامامة - الدولة النبهانية - مملكة هرمز - الدولة الصفوية.'},
+{id:26,level:'medium',lesson:'عمان ومقاومة التحالف البرتغالي',text:'من قائد الحملة العسكرية البرتغالية الأولى على عمان؟',answer:'ألبوكيرك.'},
+{id:27,level:'medium',lesson:'المنجزات الحضارية العمانية',text:'ما المدينة العمانية التي كانت تصدر اللؤلؤ والتمور أثناء مطالع العصر الحديث؟',answer:'مسقط.'},
+{id:28,level:'medium',lesson:'المنجزات الحضارية العمانية',text:'اذكر محاصيل الزراعة العمانية المذكورة في الكتاب.',answer:'العنب - الذرة - القمح.'},
+{id:29,level:'medium',lesson:'المنجزات الحضارية العمانية',text:'ما دور آل مدد في ازدهار الحياة العلمية في عمان؟',answer:'كان لهم مجلس للعلماء للتعلم.'},
+{id:30,level:'medium',lesson:'الاقتصاد العالمي',text:'ما المقصود بالتحرر الاقتصادي؟',answer:'انفراد دولة واحدة بإنتاج سلع وبيعها أو تقديم خدمة معينة.'},
+{id:31,level:'medium',lesson:'الاقتصاد العالمي',text:'ما المقصود بالتضخم؟',answer:'الارتفاع المستمر في مستوى الأسعار خلال فترة زمنية محددة.'},
+{id:32,level:'hard',lesson:'جمع البيانات الجغرافية',text:'قارن بين المسح الجوي والمسح بالأقدام في جمع البيانات الجغرافية.',answer:'المسح الجوي: جمع البيانات من الجو باستخدام الطائرات المسيّرة. المسح بالأقدام: جمع البيانات بالتنقل على سطح الأرض مباشرة.'},
+{id:33,level:'hard',lesson:'معالجة البيانات الجغرافية',text:'ما المقصود بنموذج البيانات الخطية؟',answer:'تمثيل الظواهر الجغرافية على شكل نقاط أو خطوط (مثل الإحداثيات: خط الطول ودائرة العرض).'},
+{id:34,level:'hard',lesson:'معالجة البيانات الجغرافية',text:'ما المقصود بنموذج البيانات الشبكية؟',answer:'تمثيل الظواهر الجغرافية على شكل خلايا: خلية واحدة أو خطوط متعددة أو مساحات متعددة من الخلايا المتجاورة.'},
+{id:35,level:'hard',lesson:'تطبيقات البيانات الجغرافية',text:'ما المقصود بالتحليل المصور؟',answer:'تحليل يعتمد على مجموعة من الصور الجوية أو الفضائية المصححة التي تجمع معاً في صورة واحدة تغطي منطقة جغرافية.'},
+{id:36,level:'hard',lesson:'جمع البيانات الجغرافية',text:'ما فائدة توثيق صور الظواهر الطبيعية (كالبراكين والسحب) بالكاميرا؟',answer:'سهولة الرجوع إليها عند الحاجة.'},
+{id:37,level:'hard',lesson:'تطبيقات البيانات الجغرافية',text:'اذكر تقنيات البيانات الجغرافية المستخدمة في التطبيقات.',answer:'تحديد درجات الحرارة - جمع مياه الأمطار - حماية الموارد الطبيعية - مراقبة البيئة.'},
+{id:38,level:'hard',lesson:'تطبيقات البيانات الجغرافية',text:'ما الجهة المسؤولة عن إقامة شبكة متكاملة من المحميات للحفاظ على جودة الهواء في سلطنة عمان؟',answer:'الهيئة البيئية.'},
+{id:39,level:'hard',lesson:'تطبيقات البيانات الجغرافية',text:'كيف تسهم البيانات الجغرافية في التخطيط العمراني؟',answer:'بمعرفة أفضل المواقع للطرق والمدارس والخدمات العامة، وإقامة أحياء سكنية آمنة للسكان.'},
+{id:40,level:'hard',lesson:'تطبيقات البيانات الجغرافية',text:'كيف تسهم البيانات الجغرافية في تحسين الخدمات اللوجستية؟',answer:'بمعرفة أفضل الطرق والمسارات لتوصيل الإمدادات وتوصيلها بأعلى كفاءة.'},
+{id:41,level:'hard',lesson:'الدولة العثمانية في مطالع العصر الحديث',text:'ما اسم الدولة التي حكمت عُمان من قبل قيام الدولة العثمانية؟',answer:'الدولة المملوكية.'},
+{id:42,level:'hard',lesson:'الدولة العثمانية في مطالع العصر الحديث',text:'دلّل على قوة الدولة العثمانية.',answer:'امتدت حدودها على ثلاث قارات (آسيا وأوروبا وإفريقيا) وسطرت على مساحات مهمة.'},
+{id:43,level:'hard',lesson:'عمان ومقاومة التحالف البرتغالي',text:'اذكر خطط الاحتلال البرتغالي في عمان.',answer:'مراقبة السفن العمانية وأماكنها وحرقها - قتل ثلث عاملي المدينة والتجارة - الاستقرار في مواقع مهمة على طول السواحل.'},
+{id:44,level:'hard',lesson:'المنجزات الحضارية العمانية',text:'اذكر أشهر الصناعات العمانية أثناء مطالع العصر الحديث.',answer:'صناعة السفن - الصناعات النحاسية والفضية (في نزوى وظهرة).'},
+{id:45,level:'hard',lesson:'المنجزات الحضارية العمانية',text:'اذكر أمثلة على العلماء العمانيين الذين ظهروا أثناء مطالع العصر الحديث.',answer:'آل مدد - الطبيب راشد بن عمر - أحمد بن ماجد المقيزي.'},
+{id:46,level:'hard',lesson:'الاقتصاد العالمي',text:'اذكر التحديات التي تواجه الاقتصاد العالمي.',answer:'الحروب - انخفاض معدلات الإنتاج.'},
+{id:47,level:'hard',lesson:'الاقتصاد العالمي',text:'ما نتائج التحرر على المستهلك؟',answer:'ارتفاع الأسعار وتراجع الخيارات المتاحة أمام المستهلك.'}
+];
+
+/* ============ محرك الأصوات (Web Audio) ============ */
+const SOUND_KEY='quiz-sound-enabled';
+let audioCtx=null;
+let soundEnabled=(function(){try{return localStorage.getItem(SOUND_KEY)!=='off'}catch(e){return true}})();
+function getCtx(){
+ if(audioCtx)return audioCtx;
+ const AC=window.AudioContext||window.webkitAudioContext;
+ if(!AC)return null;
+ audioCtx=new AC();
+ return audioCtx;
+}
+function primeAudio(){const ac=getCtx();if(ac&&ac.state==='suspended')ac.resume()}
+function tone(freq,delay,duration,opts){
+ opts=opts||{};
+ if(!soundEnabled)return;
+ const ac=getCtx();if(!ac)return;
+ const type=opts.type||'triangle',gain=opts.gain||0.2,slideTo=opts.slideTo;
+ const osc=ac.createOscillator(),g=ac.createGain(),t0=ac.currentTime+delay;
+ osc.type=type;osc.frequency.setValueAtTime(freq,t0);
+ if(slideTo)osc.frequency.exponentialRampToValueAtTime(slideTo,t0+duration);
+ g.gain.setValueAtTime(0.0001,t0);
+ g.gain.exponentialRampToValueAtTime(gain,t0+0.02);
+ g.gain.exponentialRampToValueAtTime(0.0001,t0+duration);
+ osc.connect(g);g.connect(ac.destination);
+ osc.start(t0);osc.stop(t0+duration+0.05);
+}
+function playCorrect(){tone(523.25,0,0.16,{gain:.2});tone(659.25,.09,.16,{gain:.2});tone(783.99,.18,.16,{gain:.2});tone(1046.5,.27,.4,{gain:.24});tone(1568,.34,.35,{type:'sine',gain:.1})}
+function playWrong(){tone(311.13,0,.2,{gain:.16});tone(233.08,.18,.35,{gain:.16,slideTo:207.65})}
+function playTimeout(){tone(440,0,.14,{type:'sine',gain:.2});tone(440,.2,.14,{type:'sine',gain:.2});tone(330,.44,.55,{type:'sine',gain:.18,slideTo:220})}
+function playTick(){tone(1100,0,.06,{type:'sine',gain:.09});tone(1650,.02,.04,{type:'sine',gain:.04})}
+function playReveal(){tone(660,0,.14,{gain:.12,slideTo:880})}
+function playClick(){tone(2100,0,.04,{type:'sine',gain:.05})}
+function playLevelDone(){tone(523.25,0,.14,{gain:.18});tone(659.25,.12,.14,{gain:.18});tone(783.99,.24,.14,{gain:.18});tone(1046.5,.36,.5,{gain:.22});tone(1318.5,.4,.45,{type:'sine',gain:.09})}
+function playVictory(){tone(130.81,0,.35,{type:'sine',gain:.24});tone(392,0,.18,{gain:.18});tone(523.25,.16,.18,{gain:.18});tone(659.25,.32,.18,{gain:.18});tone(783.99,.48,.18,{gain:.18});tone(130.81,.62,.3,{type:'sine',gain:.22});tone(1046.5,.66,.6,{gain:.22});tone(1318.5,.72,.6,{type:'sine',gain:.1});tone(1567.98,.78,.55,{type:'sine',gain:.08})}
+/* ============ أدوات مساعدة ============ */
+const AR_DIGITS='٠١٢٣٤٥٦٧٨٩';
+function toAr(n){return String(n).replace(/\d/g,function(d){return AR_DIGITS[Number(d)]})}
+function $(id){return document.getElementById(id)}
+const Q_SECONDS=30,POINTS_PER_CORRECT=10,ARC=163.36;
+
+/* ============ حالة اللعبة ============ */
+function emptyResult(){return{correct:0,wrong:0,skipped:0,points:0}}
+function emptyResults(){return{easy:emptyResult(),medium:emptyResult(),hard:emptyResult()}}
+let levelIdx=0,qIdx=0,phase='answering',timeLeft=Q_SECONDS,timedOut=false,assessment=null,timerId=null;
+let results=emptyResults();
+
+/* ============ التنقل بين الشاشات ============ */
+function showScreen(name){
+ ['start','quiz','summary','final'].forEach(function(s){
+  $('screen-'+s).classList.toggle('hidden',s!==name);
+ });
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============ المستوى الحالي ============ */
+function currentLevel(){return ORDER[levelIdx]}
+function levelQuestions(){return QUESTIONS.filter(function(q){return q.level===currentLevel()})}
+function totalPoints(){return ORDER.reduce(function(s,lv){return s+results[lv].points},0)}
+
+/* ============ المؤقت ============ */
+function updateTimer(){
+ $('timerNum').textContent=toAr(timeLeft);
+ const pct=Math.max(0,Math.min(1,timeLeft/Q_SECONDS));
+ const arc=$('timerArc');
+ arc.style.strokeDashoffset=ARC*(1-pct);
+ arc.style.stroke=pct>0.5?'#34d399':(pct>0.25?'#fbbf24':'#f43f5e');
+ $('timerNum').style.color=pct>0.5?'#34d399':(pct>0.25?'#fbbf24':'#f43f5e');
+ $('timerWrap').classList.toggle('urgent',timeLeft<=5&&timeLeft>0);
+}
+function stopTimer(){if(timerId){clearInterval(timerId);timerId=null}}
+function startTimer(){
+ stopTimer();
+ timerId=setInterval(function(){
+  if(timeLeft-1<=0){
+   timeLeft=0;stopTimer();
+   timedOut=true;phase='revealed';
+   updateTimer();playTimeout();renderRevealed();
+  }else{
+   timeLeft--;
+   if(timeLeft<=5)playTick();
+   updateTimer();
+  }
+ },1000);
+}
+
+/* ============ عرض السؤال ============ */
+function resetQuestionState(){
+ phase='answering';timeLeft=Q_SECONDS;timedOut=false;assessment=null;
+ $('revealedBox').classList.add('hidden');
+ $('timeoutMsg').classList.add('hidden');
+ $('ctrlAnswering').classList.remove('hidden');
+ $('ctrlRevealed').classList.add('hidden');
+ $('answerInput').value='';
+}
+function renderHeader(){
+ const lv=currentLevel(),meta=LEVELS[lv];
+ const badge=$('lvBadge');
+ badge.textContent=meta.name+': '+meta.title;
+ badge.className='pill lv-badge c-'+lv+' txt-'+lv;
+ /* نقاط المستويات */
+ const dots=$('levelDots');dots.innerHTML='';
+ ORDER.forEach(function(l,i){
+  const d=document.createElement('span');
+  d.className='dot'+(i<levelIdx?' dot-done':(i===levelIdx?' dot-'+l:''));
+  dots.appendChild(d);
+ });
+ /* النقاط */
+ $('scoreVal').textContent=toAr(totalPoints());
+ /* شريط التقدم */
+ const before=ORDER.slice(0,levelIdx).reduce(function(s,l){return s+countByLevel(l)},0);
+ const pct=Math.round((before+qIdx+(phase==='answering'?0:1))/QUESTIONS.length*100);
+ $('progressPct').textContent=toAr(pct)+'٪';
+ $('progressFill').style.width=pct+'%';
+ $('progressFill').style.background=lv==='easy'?'#10b981':(lv==='medium'?'#f59e0b':'#f43f5e');
+}
+function renderQuestion(){
+ const lv=currentLevel(),meta=LEVELS[lv],list=levelQuestions(),q=list[qIdx];
+ renderHeader();
+ const card=$('qCard');
+ card.className='q-card q-card-'+lv;
+ card.style.borderColor=lv==='easy'?'rgba(52,211,153,.4)':(lv==='medium'?'rgba(251,191,36,.4)':'rgba(251,113,133,.4)');
+ const chip=$('qChip');
+ chip.textContent=meta.title;
+ chip.className='pill q-chip chip-solid-'+(lv==='easy'?'e':(lv==='medium'?'m':'h'));
+ $('qNum').textContent=toAr(qIdx+1);
+ $('qTotal').textContent=toAr(list.length);
+ $('qLesson').textContent=q.lesson;
+ $('qText').textContent=q.text;
+ resetQuestionState();
+ updateTimer();
+ startTimer();
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============ كشف الإجابة والتقييم ============ */
+function renderRevealed(){
+ stopTimer();
+ const list=levelQuestions(),q=list[qIdx];
+ $('revealedBox').classList.remove('hidden');
+ $('timeoutMsg').classList.toggle('hidden',!timedOut);
+ $('correctAnswer').textContent=q.answer;
+ $('ctrlAnswering').classList.add('hidden');
+ $('ctrlRevealed').classList.remove('hidden');
+ $('assessBtns').classList.toggle('hidden',!!assessment);
+ $('assessHint').classList.toggle('hidden',!!assessment);
+ updateNextButton();
+ renderHeader();
+}
+function updateNextButton(){
+ const list=levelQuestions(),isLast=qIdx+1>=list.length;
+ $('btnNext').innerHTML=isLast
+  ?'إنهاء المستوى '+icon('flag')
+  :'السؤال التالي '+icon('chevleft');
+}
+function revealAnswer(){
+ if(phase!=='answering')return;
+ playReveal();phase='revealed';renderRevealed();
+}
+function assess(kind){
+ if(assessment)return;
+ if(kind==='correct')playCorrect();else playWrong();
+ assessment=kind;
+ results[currentLevel()][kind]++;
+ if(kind==='correct')results[currentLevel()].points+=POINTS_PER_CORRECT;
+ $('assessBtns').classList.add('hidden');
+ $('assessHint').classList.add('hidden');
+ const msg=$('assessMsg');
+ msg.classList.remove('hidden','ok','bad');
+ if(kind==='correct'){
+  msg.classList.add('ok');
+  msg.innerHTML=icon('check')+' أحسنت! إجابة صحيحة — أضفت '+toAr(POINTS_PER_CORRECT)+' نقاط إلى رصيدك';
+ }else{
+  msg.classList.add('bad');
+  msg.innerHTML=icon('x')+' لا بأس! راجع الإجابة أعلاه جيداً فهي جزء من الدرس';
+ }
+ $('scoreVal').textContent=toAr(totalPoints());
+ renderHeader();
+}
+
+/* ============ الانتقال ============ */
+function nextQuestion(){
+ if(phase==='revealed'&&!assessment)results[currentLevel()].skipped++;
+ const list=levelQuestions();
+ if(qIdx+1<list.length){
+  playClick();qIdx++;resetQuestionState();renderQuestion();
+ }else{
+  renderSummary();showScreen('summary');playLevelDone();
+ }
+}
+function nextLevel(){
+ playClick();
+ if(levelIdx+1<ORDER.length){
+  levelIdx++;qIdx=0;resetQuestionState();renderQuestion();showScreen('quiz');
+ }else{
+  renderFinal();showScreen('final');playVictory();
+ }
+}
+
+/* ============ شاشة نهاية المستوى ============ */
+function renderSummary(){
+ stopTimer();
+ const lv=currentLevel(),meta=LEVELS[lv],r=results[lv],total=countByLevel(lv);
+ const acc=total>0?Math.round(r.correct/total*100):0;
+ const isLast=levelIdx+1>=ORDER.length;
+ const nextMeta=isLast?null:LEVELS[ORDER[levelIdx+1]];
+ $('sumTitle').textContent='أنجزت '+meta.name+'!';
+ const sl=$('sumLevel');
+ sl.textContent='المستوى: '+meta.title+' — '+meta.desc;
+ sl.className='sum-level txt-'+lv;
+ $('sumCorrect').textContent=toAr(r.correct);
+ $('sumWrong').textContent=toAr(r.wrong);
+ $('sumPoints').textContent=toAr(r.points);
+ $('accVal').textContent=toAr(acc)+'٪';
+ const fill=$('accFill');
+ fill.style.width=acc+'%';
+ fill.style.background=lv==='easy'?'#10b981':(lv==='medium'?'#f59e0b':'#f43f5e');
+ $('accMsg').textContent=acc>=80
+  ?'أداء رائع! معلوماتك في هذا المستوى متينة، الأصعب بانتظارك.'
+  :(acc>=50?'جيد جداً! راجع ما أخطأت فيه وواصل التحدي بثقة.':'لا بأس! راجع الإجابات جيداً قبل الانتقال للمستوى التالي.');
+ const btn=$('btnNextLevel');
+ btn.innerHTML=isLast
+  ?'عرض النتيجة النهائية '+icon('trophy')
+  :'انتقل إلى '+nextMeta.name+': '+nextMeta.title+' '+icon('chevleft');
+}
+
+/* ============ الشاشة النهائية ============ */
+function finalMessage(pct){
+ if(pct>=90)return{title:'أداء أسطوري!',sub:'أنت بطل مسابقة التحدي بلا منازع'};
+ if(pct>=75)return{title:'ممتاز جداً!',sub:'معلوماتك قوية ومتينة، واصل التألق'};
+ if(pct>=60)return{title:'جيد جداً!',sub:'خطوة صغيرة فقط تفصلك عن القمة'};
+ if(pct>=40)return{title:'بداية جيدة',sub:'راجع الدروس ثم أعد التحدي لتحقق نتيجة أفضل'};
+ return{title:'لا تستسلم!',sub:'التعلم رحلة، أعد المحاولة وستتحسن نتيجتك حتماً'};
+}
+function renderFinal(){
+ stopTimer();
+ const totalPointsAll=totalPoints();
+ const totalCorrect=ORDER.reduce(function(s,lv){return s+results[lv].correct},0);
+ const maxPoints=QUESTIONS.length*POINTS_PER_CORRECT;
+ const pct=maxPoints>0?Math.round(totalPointsAll/maxPoints*100):0;
+ const msg=finalMessage(pct);
+ $('finalTitle').textContent=msg.title;
+ $('finalSub').textContent=msg.sub;
+ $('finalPoints').textContent=toAr(totalPointsAll);
+ $('finalMax').textContent=toAr(maxPoints);
+ $('finalCorrect').textContent=toAr(totalCorrect);
+ $('finalTotal').textContent=toAr(QUESTIONS.length);
+ $('finalArc').style.strokeDashoffset=ARC*(1-pct/100);
+ $('finalNum').textContent=toAr(pct)+'٪';
+ const box=$('finalLevels');box.innerHTML='';
+ ORDER.forEach(function(lv){
+  const m=LEVELS[lv],r=results[lv],t=countByLevel(lv);
+  const row=document.createElement('div');
+  row.className='fl-row c-'+lv;
+  row.style.borderColor=lv==='easy'?'rgba(52,211,153,.4)':(lv==='medium'?'rgba(251,191,36,.4)':'rgba(251,113,133,.4)');
+  row.innerHTML='<div class="fl-right"><span class="pill chip-solid-'+(lv==='easy'?'e':(lv==='medium'?'m':'h'))+'">'+m.title+'</span><span class="fl-name">'+m.name+'</span></div>'
+   +'<div class="fl-left"><span class="txt-'+lv+'">'+toAr(r.correct)+'/'+toAr(t)+'</span><span style="color:var(--am300)">'+toAr(r.points)+' نقطة</span></div>';
+  box.appendChild(row);
+ });
+}
+
+/* ============ البداية والعودة ============ */
+function startQuiz(){
+ primeAudio();playClick();
+ results=emptyResults();levelIdx=0;qIdx=0;
+ renderQuestion();showScreen('quiz');
+}
+function goStart(){
+ stopTimer();
+ results=emptyResults();levelIdx=0;qIdx=0;
+ phase='answering';timedOut=false;assessment=null;
+ $('confirmExit').classList.add('hidden');
+ showScreen('start');
+}
+
+/* ============ بناء شاشة البداية ============ */
+function buildStartScreen(){
+ $('statQuestions').textContent=toAr(QUESTIONS.length);
+ const grid=$('levelsGrid');grid.innerHTML='';
+ ORDER.forEach(function(lv){
+  const m=LEVELS[lv];
+  const card=document.createElement('div');
+  card.className='level-card c-'+lv+' glow-'+(lv==='easy'?'e':(lv==='medium'?'m':'h'));
+  card.innerHTML='<div class="lv-head"><span class="pill chip-solid-'+(lv==='easy'?'e':(lv==='medium'?'m':'h'))+'">'+m.title+'</span><span class="lv-name">'+m.name+'</span></div>'
+   +'<p class="lv-desc">'+m.desc+'</p>'
+   +'<div class="lv-count">'+toAr(countByLevel(lv))+' سؤالاً</div>'
+   +'<div class="lv-bar" style="background:'+(lv==='easy'?'#10b981':(lv==='medium'?'#f59e0b':'#f43f5e'))+'"></div>';
+  grid.appendChild(card);
+ });
+}
+
+/* ============ زر الصوت ============ */
+function refreshSoundToggle(){
+ const btn=$('soundToggle');
+ btn.classList.toggle('on',soundEnabled);
+ btn.innerHTML=icon(soundEnabled?'vol2':'volx');
+ btn.setAttribute('aria-label',soundEnabled?'كتم الأصوات':'تشغيل الأصوات');
+ btn.title=soundEnabled?'كتم الأصوات':'تشغيل الأصوات';
+}
+$('soundToggle').addEventListener('click',function(){
+ soundEnabled=!soundEnabled;
+ try{localStorage.setItem(SOUND_KEY,soundEnabled?'on':'off')}catch(e){}
+ if(soundEnabled){primeAudio();playClick()}
+ refreshSoundToggle();
+});
+
+/* ============ ربط الأحداث ============ */
+$('btnStart').addEventListener('click',startQuiz);
+$('btnReveal').addEventListener('click',revealAnswer);
+$('btnCorrect').addEventListener('click',function(){assess('correct')});
+$('btnWrong').addEventListener('click',function(){assess('wrong')});
+$('btnNext').addEventListener('click',nextQuestion);
+$('btnNextLevel').addEventListener('click',nextLevel);
+$('btnRestart').addEventListener('click',startQuiz);
+$('btnExit').addEventListener('click',function(){$('confirmExit').classList.remove('hidden')});
+$('btnNoExit').addEventListener('click',function(){$('confirmExit').classList.add('hidden')});
+$('btnYesExit').addEventListener('click',goStart);
+$('btnSumExit').addEventListener('click',goStart);
+$('btnFinalExit').addEventListener('click',goStart);
+document.addEventListener('pointerdown',function(){if(soundEnabled)primeAudio()},{once:true});
+
+/* ============ الإقلاع ============ */
+buildStartScreen();
+refreshSoundToggle();
+</script>
+</body>
+</html>
